@@ -1,5 +1,7 @@
 #include "clusters.h"
 
+using namespace std;
+
 std::ostream& operator << (std::ostream& out, const ClusterType& type) {
     if (type == ClusterType::CENTER) {
         out << "1PX CENTER";
