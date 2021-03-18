@@ -1,3 +1,5 @@
+#pragma once
+
 #include "absorption.h"
 #include <vector>
 

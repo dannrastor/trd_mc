@@ -1,3 +1,5 @@
+#pragma once
+
 //detector parameters
 constexpr double THR = 4.2;
 constexpr double PAIR_ENERGY = 0.0042;
