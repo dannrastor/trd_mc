@@ -30,7 +30,7 @@
 //sigma(z) fit parameters
 #define p0 2.96
 #define p1 0.02
-#define p2 -0.000014 
+#define p2 -0.000014
 
 
 using namespace std;
@@ -39,38 +39,9 @@ random_device rd;
 mt19937 gen(rd());
 
 
-enum class ClusterType {
-    CENTER,
-    OFF_CENTER_SIDE,
-    OFF_CENTER_CORNER,
-    SIDES,
-    CORNERS,
-    _3PX,
-    _4PX,
-    NOT_DETECTED
-};
 
-ostream& operator << (ostream& out, const ClusterType& type) {
-    if (type == ClusterType::CENTER) {
-        out << "1PX CENTER";
-    } else if (type == ClusterType::OFF_CENTER_SIDE) {
-        out << "1PX OFF_CENTER_SIDE";
-    } else if (type == ClusterType::OFF_CENTER_CORNER) {
-        out << "1PX OFF_CENTER_CORNER";
-    } else if (type == ClusterType::SIDES) {
-        out << "2PX SIDES";
-    } else if (type == ClusterType::CORNERS) {
-        out << "2PX CORNERS";
-    } else if (type == ClusterType::_3PX) {
-        out << "3PX";
-    } else if (type == ClusterType::_4PX) {
-        out << "4PX";
-    } else {
-        out << "NOT_DETECTED";
-    }
-    
-    return out;
-};
+
+
 
 struct PhotonHit {
     double x;
@@ -95,21 +66,21 @@ private:
     double yield_xy() {
         return PX_SIZE * unity(gen);
     }
-    
+
     double abs_length(double energy) {
         double A = (energy < 10) ? A1 : A2;
         double B = (energy < 10) ? B1 : B2;
         double mu = exp(A * log(energy) + B);
         return 1 / mu * 10000;
-        
+
     }
-    
+
     double depth_distribution(double z) {
         return exp(-1.0 * (THICKNESS - z) / abs_length(PHOTON_ENERGY));
     };
     double yield_z() {
         uniform_real_distribution<double> urd(0, 1);
-        
+
         while(1) {
             double z = THICKNESS * unity(gen);
             double p = unity(gen);
@@ -120,14 +91,14 @@ private:
     };
 public:
     PhotonGenerator() : unity(0, 1) {}
-    
+
     PhotonDistribution Generate(double energy) {
         PhotonDistribution result;
 
         double x = yield_xy();
         double y = yield_xy();
         double z = yield_z();
-        
+
         double if_fluo = unity(gen);
         if (if_fluo < FLUO_RATE && energy > FLUO_ENERGY) {
             double path = (unity(gen) > FLUO_BRANCH) ? FLUO_DISTANCE_AS : FLUO_DISTANCE_GA;
@@ -159,10 +130,10 @@ public:
     };
     Event Process(const PhotonDistribution& distr) {
         Event result;
-        
+
         //3x3 array: energy deposit
         vector<vector<double>> pixels(3, vector<double>(3));
-        
+
         for (const auto& photon : distr) {
             double e = smear_e(photon.energy);
             double sig = sigma(photon.z);
@@ -174,8 +145,8 @@ public:
         }
         int counter = 0;
         double deposit = 0;
-        
-        
+
+
         for (int i = 0; i < 3; ++i) {
             for (int j = 0; j < 3; ++j) {
                 pixels[i][j] += yield_noise();
@@ -184,14 +155,14 @@ public:
                 } else {
                     counter++;
                     deposit += pixels[i][j];
-                }                
+                }
             }
         }
-        
-        return {deposit, counter, distr[0].z, define_type(pixels, counter)};        
+
+        return {deposit, counter, distr[0].z, define_type(pixels, counter)};
     };
-    
-    
+
+
 private:
     double sigma(double z) {
         return p0 + p1 * z + p2 * z * z;
@@ -202,39 +173,11 @@ private:
         normal_distribution<double> nd(npairs, sig);
         return PAIR_ENERGY * nd(gen);
     }
-    double yield_noise() {        
+    double yield_noise() {
         return PAIR_ENERGY * noise_distr(gen);
     }
-    ClusterType define_type(const vector<vector<double>>& shape, int counter) {
-        switch(counter) {
-            case 0:
-                return ClusterType::NOT_DETECTED;
-                break;
-            case 1:
-                if (shape[1][1]) {
-                    return ClusterType::CENTER;
-                } else if (shape[0][0] || shape[0][2] || shape[2][0] || shape[2][2]) {
-                    return ClusterType::OFF_CENTER_CORNER;
-                } else {
-                    return ClusterType::OFF_CENTER_SIDE;
-                }
-                break;
-            case 2:
-                if (shape[0][0] || shape[0][2] || shape[2][0] || shape[2][2]) {
-                    return ClusterType::CORNERS;
-                } else {
-                    return ClusterType::SIDES;
-                }
-                break;
-            case 3:
-                return ClusterType::_3PX;
-                break;
-            case 4:
-                return ClusterType::_4PX;
-                break;
-        }
-    }
-    
+
+
     normal_distribution<double> noise_distr;
     vector<function<double(double, double)>> vfunc;
 };
@@ -251,12 +194,3 @@ map<ClusterType, int> clsstats(double e) {
     }
     return cluster_stats;
 }
-
-
-
-
-
-
-
-
-
