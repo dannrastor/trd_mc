@@ -2,6 +2,8 @@
 
 #include <iostream>
 #include <vector>
+#include <map>
+#include <utility>
 
 enum class ClusterType {
     CENTER,
@@ -17,4 +19,4 @@ enum class ClusterType {
 std::ostream& operator << (std::ostream& out, const ClusterType& type);
 
 // shape is a 3*3 array with a central pixel being hit
-ClusterType define_type(const std::vector<std::vector<double>>& shape);
+ClusterType define_type(const std::map<std::pair<int, int>, double>& shape);

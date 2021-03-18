@@ -24,31 +24,24 @@ std::ostream& operator << (std::ostream& out, const ClusterType& type) {
     return out;
 }
 
-ClusterType define_type(const vector<vector<double>>& shape) {
-    int counter = 0;
-    for (const auto& row : shape) {
-        for (auto& it : row) {
-            if (it) {
-                ++counter;
-            }
-        }
-    }
+ClusterType define_type(const map<pair<int, int>, double>& shape) {
 
-    switch(counter) {
+
+    switch(shape.size()) {
         case 0:
             return ClusterType::NOT_DETECTED;
             break;
         case 1:
-            if (shape[1][1]) {
+            if (shape.count({0, 0})) {
                 return ClusterType::CENTER;
-            } else if (shape[0][0] || shape[0][2] || shape[2][0] || shape[2][2]) {
+            } else if (shape.count({-1, -1}) || shape.count({-1, 1}) || shape.count({1, -1}) || shape.count({1, 1})) {
                 return ClusterType::OFF_CENTER_CORNER;
             } else {
                 return ClusterType::OFF_CENTER_SIDE;
             }
             break;
         case 2:
-            if (shape[0][0] || shape[0][2] || shape[2][0] || shape[2][2]) {
+            if (shape.count({-1, -1}) || shape.count({-1, 1}) || shape.count({1, -1}) || shape.count({1, 1})) {
                 return ClusterType::CORNERS;
             } else {
                 return ClusterType::SIDES;

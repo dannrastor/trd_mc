@@ -1,13 +1,17 @@
 #pragma once
 
 #include "absorption.h"
+#include "weighting_potential.h"
 #include <vector>
+#include <utility>
+#include <map>
 
 
 
 class ResponseGenerator {
 public:
     ResponseGenerator();
-    std::vector<std::vector<double>> Process(const std::vector<PhotonHit>& distr);
-
+    std::map<std::pair<int, int>, double> Process(const std::vector<PhotonHit>& distr);
+private:
+    WeightingPotentialMap wp;
 };
