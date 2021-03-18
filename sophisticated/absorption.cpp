@@ -13,7 +13,7 @@ PhotonGenerator::PhotonGenerator() {
 }
 
 double PhotonGenerator::yield_xy() {
-    return PX_SIZE * unity(gen);
+    return PX_SIZE * (unity(gen) - 0.5);
 }
 
 double PhotonGenerator::abs_length(double energy) {
