@@ -25,3 +25,9 @@ constexpr double FLUO_BRANCH = 0.5;
 constexpr double FLUO_DISTANCE_GA = 40.0;
 constexpr double FLUO_DISTANCE_AS = 15.0;
 constexpr double FLUO_ENERGY = 10.0;
+
+//initial cloud parameters
+//size = A*Energy*(1 - B/(C*energy+1)
+constexpr double CLOUD_A = 1.03; // um/kev
+constexpr double CLOUD_B = 0.98;
+constexpr double CLOUD_C = 0.003; // 1/kev

@@ -11,7 +11,7 @@ public:
 
   int ReadFile(std::string fname);
 
-  float GetV(float x, float y, float z);#
+  float GetV(float x, float y, float z);
 
   int Dump();
 
