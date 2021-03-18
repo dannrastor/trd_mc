@@ -1,4 +1,4 @@
-#include "WeightingPotentialMap.hh"
+#include "weighting_potential.h"
 
 #include <iostream>
 #include <iomanip>
