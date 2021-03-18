@@ -1,2 +1,2 @@
-test : *.cpp *.h
-	g++ -o test absorption.cpp clusters.cpp response.cpp test.cpp weighting_potential.cpp
+test : ./src/*.cpp ./include/*.h test.cpp
+	g++ -o test test.cpp ./src/*.cpp -I./include
