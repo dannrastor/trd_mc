@@ -1,11 +1,15 @@
 #include "absorption.h"
+#include "constants.h"
+
+#define _USE_MATH_DEFINES
+#include <cmath>
 
 using namespace std;
 
 PhotonGenerator::PhotonGenerator() {
     random_device rd;
     gen = mt19937(rd());
-    unity = uniform_real_distribution(0, 1);
+    unity = uniform_real_distribution<double>(0, 1);
 }
 
 double PhotonGenerator::yield_xy() {
@@ -20,17 +24,17 @@ double PhotonGenerator::abs_length(double energy) {
 
 }
 
-double PhotonGenerator::depth_distribution(double z) {
-    return exp(-1.0 * (THICKNESS - z) / abs_length(PHOTON_ENERGY));
+double PhotonGenerator::depth_distribution(double z, double energy) {
+    return exp(-1.0 * (THICKNESS - z) / abs_length(energy));
 };
 
-double PhotonGenerator::yield_z() {
+double PhotonGenerator::yield_z(double energy) {
     uniform_real_distribution<double> urd(0, 1);
 
     while(1) {
         double z = THICKNESS * unity(gen);
         double p = unity(gen);
-        if (p < depth_distribution(z)) {
+        if (p < depth_distribution(z, energy)) {
             return z;
         }
     }
@@ -41,12 +45,12 @@ vector<PhotonHit> PhotonGenerator::Generate(double energy) {
 
     double x = yield_xy();
     double y = yield_xy();
-    double z = yield_z();
+    double z = yield_z(energy);
 
     double if_fluo = unity(gen);
     if (if_fluo < FLUO_RATE && energy > FLUO_ENERGY) {
         double path = (unity(gen) > FLUO_BRANCH) ? FLUO_DISTANCE_AS : FLUO_DISTANCE_GA;
-        double phi = 2 * TMath::Pi() * unity(gen);
+        double phi = 2 * M_PI * unity(gen);
         double cos_theta = 2 * unity(gen) - 1;
         double xf = x + path * cos(phi) * cos_theta;
         double yf = y + path * sin(phi) * cos_theta;
