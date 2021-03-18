@@ -1,3 +1,21 @@
+//absorption parameters
+// ln(mu[cm^-1]) = A * ln(E[keV]) + B
+//for E < 10 keV (see NIST)
+#define A1 -2.658
+#define B1 11.401
+//for E > 10 keV
+#define A2 -2.735
+#define B2 13.570
+
+
+//fluo parameters
+#define FLUO_RATE 0.5
+#define FLUO_BRANCH 0.5
+#define FLUO_DISTANCE_GA 40.0
+#define FLUO_DISTANCE_AS 15.0
+#define FLUO_ENERGY 10.0
+
+
 #include <random>
 
 struct PhotonHit {

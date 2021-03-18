@@ -1,5 +1,6 @@
 #include "absorption.h"
 
+using namespace std;
 
 PhotonGenerator::PhotonGenerator() {
     random_device rd;
@@ -22,6 +23,7 @@ double PhotonGenerator::abs_length(double energy) {
 double PhotonGenerator::depth_distribution(double z) {
     return exp(-1.0 * (THICKNESS - z) / abs_length(PHOTON_ENERGY));
 };
+
 double PhotonGenerator::yield_z() {
     uniform_real_distribution<double> urd(0, 1);
 
@@ -33,8 +35,6 @@ double PhotonGenerator::yield_z() {
         }
     }
 };
-
-
 
 vector<PhotonHit> PhotonGenerator::Generate(double energy) {
     vector<PhotonHit> result;
