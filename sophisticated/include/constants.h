@@ -1,12 +1,18 @@
 #pragma once
 
 //detector parameters
-constexpr double THR = 4.2;
-constexpr double PAIR_ENERGY = 0.0042;
+constexpr double THR = 4.2; //keV
 constexpr double NOISE = 80; //electrons
+constexpr double PX_SIZE = 55.0; //um
+constexpr double THICKNESS = 500.0; //um
+
+
+//semicounductor parameters
+constexpr double PAIR_ENERGY = 0.0042; //keV
 constexpr double FANO = 0.14;
-constexpr double PX_SIZE = 55.0;
-constexpr double THICKNESS = 500.0;
+constexpr double DIFFUSION_COEFF = 1; //FIXME
+constexpr double MUTAU = 1; //FIXME
+constexpr double LIFETIME = 1; //FIXME
 
 
 //absorption parameters
