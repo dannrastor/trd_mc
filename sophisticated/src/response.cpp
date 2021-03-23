@@ -81,8 +81,8 @@ map<pair<int, int>, double> ResponseGenerator::Process(const vector<PhotonHit>& 
 
                 for (int x_pixel = -1; x_pixel <= 1; ++x_pixel) {
                     for (int y_pixel = -1; y_pixel <= 1; ++y_pixel) {
-                            double v_pre = GetPixelRelatedV(x_prestep, y_prestep, z_prestep);
-                            double v_post = GetPixelRelatedV(x_poststep, y_poststep, z_poststep);
+                            double v_pre = GetPixelRelatedV(x_prestep, y_prestep, z_prestep, x_pixel, y_pixel);
+                            double v_post = GetPixelRelatedV(x_poststep, y_poststep, z_poststep, x_pixel, y_pixel);
                             result[{x_pixel, y_pixel}] += charge * (v_post - v_pre);
                     }
                 }
