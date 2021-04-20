@@ -48,8 +48,9 @@ void test_v() {
 
 void test_gaas() {
     ResponseGenerator rg;
-    for (double z = 500; z >= 0 ; z-= 50) {
-        cout << "z = " << z << " CCE = " << rg.GetCCE(z) << " sig_diff = " << rg.GetDiffusionSigma(z) << endl;
+    for (double z = 0; z <= 500 ; z++) {
+        //cout << "z = " << z << " CCE = " << rg.GetCCE(z) << " sig_diff = " << rg.GetDiffusionSigma(z) << endl;
+        cout << rg.GetCCE(z) * (1 - rg.GetPixelRelatedV(0, 0, z, 0, 0)) << " ";
     }
 }
 
@@ -61,12 +62,16 @@ void test_response() {
     PrintChargeMap(rg.Process(v), cout);
 }
 
+void test_depth() {
+    ResponseGenerator rg;
+}
+
 int main() {
     TestRunner tr;
     //RUN_TEST(tr, test_smear);
     //RUN_TEST(tr, test_v);
     //RUN_TEST(tr, test_response);
-    RUN_TEST(tr, test_cloudsize);
+    //RUN_TEST(tr, test_cloudsize);
     RUN_TEST(tr, test_gaas);
     return 0;
 }
