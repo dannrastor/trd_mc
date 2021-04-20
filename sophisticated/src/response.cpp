@@ -61,7 +61,7 @@ map<pair<int, int>, double> ResponseGenerator::Process(const vector<PhotonHit>& 
         //initial ionization and its fluctuations limited by the Fano factor
         double n_electrons = hit.energy / PAIR_ENERGY;
 
-        n_electrons = Smear(n_electrons, sqrt(n_electrons)*FANO);
+        n_electrons = Smear(n_electrons, sqrt(n_electrons * FANO));
 
 
         int n_groups = n_electrons / n_group_electrons;
