@@ -45,8 +45,8 @@ map<pair<int, int>, double> ResponseGenerator::Process(const vector<PhotonHit>& 
     map<pair<int, int>, double> result;
 
     //simulation parameters
-    int n_group_electrons = 1;
-    int n_steps = 100;
+    int n_group_electrons = 10;
+    int n_steps = 10;
 
     for (const auto& hit : hits) {
 
@@ -58,10 +58,9 @@ map<pair<int, int>, double> ResponseGenerator::Process(const vector<PhotonHit>& 
 
         int n_groups = n_electrons / n_group_electrons;
 
-        double drift_time = 1; //FIXME
         double cloud_size = 0; //InitialCloudSize(hit.energy);
-        double diffusion_sigma = 0; //sqrt(DIFFUSION_COEFF * drift_time);
 
+        double diffusion_sigma = sqrt(2 * K_BOLTZ * TEMP * THICKNESS * hit.z / BIAS / ELECTRON_CHARGE);
 
 
         for (int i_group = 0; i_group < n_groups; ++i_group) {
@@ -96,7 +95,7 @@ map<pair<int, int>, double> ResponseGenerator::Process(const vector<PhotonHit>& 
                     }
                 }
 
-                //charge *= exp(-drift_time / n_steps / LIFETIME);
+                //charge *= exp(- fabs(z_prestep - z_poststep) * THICKNESS / (MUTAU * ELECTRON_CHARGE * BIAS));
 
             }
 

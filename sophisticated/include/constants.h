@@ -6,13 +6,18 @@ constexpr double NOISE = 80; //electrons
 constexpr double PX_SIZE = 55.0; //um
 constexpr double THICKNESS = 500.0; //um
 
+constexpr double BIAS = 400.0;
+constexpr double TEMP = 310.0; //K
 
 //semicounductor parameters
 constexpr double PAIR_ENERGY = 0.0042; //keV
 constexpr double FANO = 0.14;
-constexpr double DIFFUSION_COEFF = 1; //FIXME
-constexpr double MUTAU = 1; //FIXME
-constexpr double LIFETIME = 1; //FIXME
+
+constexpr double ELECTRON_CHARGE = 1.6e-19;
+constexpr double K_BOLTZ = 1.38e-23;
+constexpr double MUTAU = 0.00011; //FIXME in which units?
+
+
 
 
 //absorption parameters

@@ -48,7 +48,7 @@ void test_v() {
 
 void test_response() {
     ResponseGenerator rg;
-    PhotonHit h{0, 0, 100, 60};
+    PhotonHit h{25, 0, 500, 60};
     vector<PhotonHit> v;
     v.push_back(h);
     PrintChargeMap(rg.Process(v), cout);
