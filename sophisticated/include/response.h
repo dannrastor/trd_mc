@@ -14,6 +14,9 @@ public:
     ResponseGenerator();
     std::map<std::pair<int, int>, double> Process(const std::vector<PhotonHit>& distr);
 public:
+
+    double GetDiffusionSigma(double z);
+    double GetCCE(double dz);
     double Smear(double value, double sigma);
     double InitialCloudSize(double energy);
     double GetPixelRelatedV (double x, double y, double z, int x_pixel, int y_pixel);

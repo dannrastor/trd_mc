@@ -12,6 +12,14 @@ double ResponseGenerator::Smear(double value, double sigma) {
     return d(gen);
 }
 
+double ResponseGenerator::GetDiffusionSigma(double z) {
+    return sqrt(2 * K_BOLTZ * TEMP * THICKNESS * z / BIAS / ELECTRON_CHARGE);
+}
+
+double ResponseGenerator::GetCCE(double dz) {
+    return exp(- dz * THICKNESS / (MU * TAU * BIAS));
+}
+
 
 ResponseGenerator::ResponseGenerator() {
 
@@ -46,7 +54,7 @@ map<pair<int, int>, double> ResponseGenerator::Process(const vector<PhotonHit>& 
 
     //simulation parameters
     int n_group_electrons = 10;
-    int n_steps = 10;
+    int n_steps = 1;
 
     for (const auto& hit : hits) {
 
@@ -60,7 +68,7 @@ map<pair<int, int>, double> ResponseGenerator::Process(const vector<PhotonHit>& 
 
         double cloud_size = 0; //InitialCloudSize(hit.energy);
 
-        double diffusion_sigma = sqrt(2 * K_BOLTZ * TEMP * THICKNESS * hit.z / BIAS / ELECTRON_CHARGE);
+        double diffusion_sigma = 0; //GetDiffusionSigma(hit.z);
 
 
         for (int i_group = 0; i_group < n_groups; ++i_group) {
@@ -94,8 +102,8 @@ map<pair<int, int>, double> ResponseGenerator::Process(const vector<PhotonHit>& 
                             result[{x_pixel, y_pixel}] += charge * (v_post - v_pre);
                     }
                 }
-
-                //charge *= exp(- fabs(z_prestep - z_poststep) * THICKNESS / (MUTAU * ELECTRON_CHARGE * BIAS));
+                //float coef = uBias * mutau / (thickness  * d * 0.00000001);
+                charge *= GetCCE(fabs(z_prestep - z_poststep));
 
             }
 

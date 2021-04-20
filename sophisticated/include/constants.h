@@ -7,7 +7,7 @@ constexpr double PX_SIZE = 55.0; //um
 constexpr double THICKNESS = 500.0; //um
 
 constexpr double BIAS = 400.0;
-constexpr double TEMP = 310.0; //K
+constexpr double TEMP = 320.0; //K
 
 //semicounductor parameters
 constexpr double PAIR_ENERGY = 0.0042; //keV
@@ -15,7 +15,10 @@ constexpr double FANO = 0.14;
 
 constexpr double ELECTRON_CHARGE = 1.6e-19;
 constexpr double K_BOLTZ = 1.38e-23;
-constexpr double MUTAU = 0.00011; //FIXME in which units?
+
+constexpr double MU = 3e11; // um2 / (V * s)
+constexpr double TAU = 10e-9; //seconds
+
 
 
 

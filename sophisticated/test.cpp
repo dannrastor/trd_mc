@@ -46,9 +46,16 @@ void test_v() {
     }
 }
 
+void test_gaas() {
+    ResponseGenerator rg;
+    for (double z = 500; z >= 0 ; z-= 50) {
+        cout << "z = " << z << " CCE = " << rg.GetCCE(z) << " sig_diff = " << rg.GetDiffusionSigma(z) << endl;
+    }
+}
+
 void test_response() {
     ResponseGenerator rg;
-    PhotonHit h{25, 0, 500, 60};
+    PhotonHit h{0, 0, 100, 60};
     vector<PhotonHit> v;
     v.push_back(h);
     PrintChargeMap(rg.Process(v), cout);
@@ -58,7 +65,8 @@ int main() {
     TestRunner tr;
     //RUN_TEST(tr, test_smear);
     //RUN_TEST(tr, test_v);
-    RUN_TEST(tr, test_response);
-    //RUN_TEST(tr, test_cloudsize);
+    //RUN_TEST(tr, test_response);
+    RUN_TEST(tr, test_cloudsize);
+    RUN_TEST(tr, test_gaas);
     return 0;
 }
