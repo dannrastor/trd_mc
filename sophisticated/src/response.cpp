@@ -38,6 +38,10 @@ double ResponseGenerator::GetPixelRelatedV(double x, double y, double z, int x_p
 
     double H = PX_SIZE / 2.0;
 
+    if (z > 500) {
+        return 0;
+    }
+
     if (z == 0) {
         if ((x_eff > -H) && (x_eff < H) && (y_eff > -H) && (y_eff < H)) {
             return 1;
@@ -50,11 +54,12 @@ double ResponseGenerator::GetPixelRelatedV(double x, double y, double z, int x_p
 }
 
 map<pair<int, int>, double> ResponseGenerator::Process(const vector<PhotonHit>& hits) {
+
     map<pair<int, int>, double> result;
 
     //simulation parameters
     int n_group_electrons = 10;
-    int n_steps = 5;
+    int n_steps = 10;
 
     for (const auto& hit : hits) {
 
@@ -67,7 +72,6 @@ map<pair<int, int>, double> ResponseGenerator::Process(const vector<PhotonHit>& 
         int n_groups = n_electrons / n_group_electrons;
 
         double cloud_size = InitialCloudSize(hit.energy);
-
         double diffusion_sigma = GetDiffusionSigma(hit.z);
 
 
@@ -98,11 +102,9 @@ map<pair<int, int>, double> ResponseGenerator::Process(const vector<PhotonHit>& 
                     for (int y_pixel = -1; y_pixel <= 1; ++y_pixel) {
                             double v_pre = GetPixelRelatedV(x_prestep, y_prestep, z_prestep, x_pixel, y_pixel);
                             double v_post = GetPixelRelatedV(x_poststep, y_poststep, z_poststep, x_pixel, y_pixel);
-                            //if (x_pixel * x_pixel + y_pixel*y_pixel == 0) cout << x_pixel << " " << y_pixel << " " << v_post << " " << v_pre << endl;
                             result[{x_pixel, y_pixel}] += charge * (v_post - v_pre);
                     }
                 }
-                //float coef = uBias * mutau / (thickness  * d * 0.00000001);
                 charge *= GetCCE(fabs(z_prestep - z_poststep));
 
             }

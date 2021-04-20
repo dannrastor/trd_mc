@@ -76,6 +76,8 @@ void make_energy_plot_pg() {
     f->Close();
 }
 
+
+
 void test_absorption() {
     PhotonGenerator pg;
     int n_entries = 100000;
