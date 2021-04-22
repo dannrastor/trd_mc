@@ -15,6 +15,61 @@
 
 using namespace std;
 
+void PrintChargeMap(const map<pair<int, int>, double>& m, ostream& out) {
+
+    double total = 0;
+    for (const auto& [k, v] : m) {
+        total += v * PAIR_ENERGY;
+    }
+
+    for (int i = -1; i <= 1; ++i) {
+        for (int j = -1; j <= 1; ++j) {
+            out << fixed << setw(6) << setprecision(2) << m.at({j, i}) * PAIR_ENERGY << " ";
+        }
+        out << endl;
+    }
+    cout << "total " << total << endl;
+}
+
+void test_smear() {
+    ResponseGenerator rg;
+    for (int i = 0; i < 10; ++i) cout << rg.Smear(0, 1) << endl;
+}
+
+void test_cloudsize() {
+    ResponseGenerator rg;
+    for (double e = 10; e <= 61; e += 10) {
+        cout << e << " keV " << rg.InitialCloudSize(e) << " um" << endl;
+    }
+}
+
+void test_v() {
+    ResponseGenerator rg;
+    for (double v = 0; v < 100; v+= 1) {
+        cout << "z = " << v << " " <<rg.GetPixelRelatedV(0, 0, v, 0, 0) << endl;
+    }
+}
+
+void test_gaas() {
+    ResponseGenerator rg;
+    for (double z = 0; z <= 500 ; z++) {
+        //cout << "z = " << z << " CCE = " << rg.GetCCE(z) << " sig_diff = " << rg.GetDiffusionSigma(z) << endl;
+        cout << rg.GetCCE(z) * (1 - rg.GetPixelRelatedV(0, 0, z, 0, 0)) << " ";
+    }
+}
+
+void test_response() {
+    ResponseGenerator rg;
+    PhotonHit h{0, 0, 100, 60};
+    vector<PhotonHit> v;
+    v.push_back(h);
+    PrintChargeMap(rg.Process(v), cout);
+}
+
+void test_depth() {
+    ResponseGenerator rg;
+}
+
 void make_energy_plot() {
     double energy = 40;
     double n_particles = 5000;
@@ -49,13 +104,10 @@ void make_energy_plot() {
 
 void make_energy_plot_pg() {
     double energy = 40;
-    double n_particles = 1000;
+    double n_particles = 5000;
 
-    TH1D* hist = new TH1D("a", "a", 200, 0, 50);
-    TFile* f = new TFile("/home/daniil/Desktop/trd_plots/out.root", "recreate");
-
-    mt19937 gen(random_device{}());
-    uniform_real_distribution<double> coord(-27.5, 27.5);
+    TH1D* hist = new TH1D("a", "a", 80, 0, 45);
+    TFile* f = new TFile("/home/daniil/Desktop/trd_plots/out_nolife.root", "recreate");
 
 
     PhotonGenerator pg;
@@ -75,8 +127,6 @@ void make_energy_plot_pg() {
     hist->Write();
     f->Close();
 }
-
-
 
 void test_absorption() {
     PhotonGenerator pg;
@@ -99,8 +149,11 @@ void test_absorption() {
 
 }
 
+
+
 int main() {
     //test_absorption();
-    make_energy_plot();
+    //make_energy_plot();
+    make_energy_plot_pg();
     return 0;
 }

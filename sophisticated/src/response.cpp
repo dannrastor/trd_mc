@@ -59,7 +59,7 @@ map<pair<int, int>, double> ResponseGenerator::Process(const vector<PhotonHit>& 
 
     //simulation parameters
     int n_group_electrons = 10;
-    int n_steps = 10;
+    int n_steps = 20;
 
     for (const auto& hit : hits) {
 
@@ -105,7 +105,7 @@ map<pair<int, int>, double> ResponseGenerator::Process(const vector<PhotonHit>& 
                             result[{x_pixel, y_pixel}] += charge * (v_post - v_pre);
                     }
                 }
-                charge *= GetCCE(fabs(z_prestep - z_poststep));
+                //charge *= GetCCE(fabs(z_prestep - z_poststep));
 
             }
 
