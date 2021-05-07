@@ -59,7 +59,7 @@ map<pair<int, int>, double> ResponseGenerator::Process(const vector<PhotonHit>& 
 
     //simulation parameters
     int n_group_electrons = 10;
-    int n_steps = 10;
+    int n_steps = 5;
 
     for (const auto& hit : hits) {
 

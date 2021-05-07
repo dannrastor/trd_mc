@@ -19,8 +19,8 @@ void make_energy_plot() {
     double energy = 40;
     double n_particles = 5000;
 
-    TH1D* hist = new TH1D("a", "a", 200, 0, 50);
-    TFile* f = new TFile("/home/daniil/Desktop/trd_plots/mono40kev_z500um.root", "recreate");
+    TH1D* hist = new TH1D("a", "a", 100, 20, 45);
+    TFile* f = new TFile("/home/daniil/Desktop/trd_plots/mono40kev_z400um.root", "recreate");
 
     mt19937 gen(random_device{}());
     uniform_real_distribution<double> coord(-27.5, 27.5);
@@ -30,7 +30,7 @@ void make_energy_plot() {
     for (int i = 0 ; i < n_particles; ++i) {
         double x = coord(gen);
         double y = coord(gen);
-        PhotonHit h{x, y, 500, energy};
+        PhotonHit h{x, y, 400, energy};
         vector<PhotonHit> v;
         v.push_back(h);
         auto res = rg.Process(v);
