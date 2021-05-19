@@ -8,6 +8,10 @@
 #define PX_SIZE 55.0
 #define THICKNESS 500.0
 
+#define MU 3e11
+#define TAU 20e-9
+#define BIAS 400
+
 //absorption parameters
 // ln(mu[cm^-1]) = A * ln(E[keV]) + B
 //for E < 10 keV (see NIST)
@@ -30,7 +34,7 @@
 //sigma(z) fit parameters
 #define p0 2.96
 #define p1 0.02
-#define p2 -0.000014 
+#define p2 -0.000014
 
 
 using namespace std;
@@ -68,7 +72,7 @@ ostream& operator << (ostream& out, const ClusterType& type) {
     } else {
         out << "NOT_DETECTED";
     }
-    
+
     return out;
 };
 
@@ -95,21 +99,21 @@ private:
     double yield_xy() {
         return PX_SIZE * unity(gen);
     }
-    
+
     double abs_length(double energy) {
         double A = (energy < 10) ? A1 : A2;
         double B = (energy < 10) ? B1 : B2;
         double mu = exp(A * log(energy) + B);
         return 1 / mu * 10000;
-        
+
     }
-    
+
     double depth_distribution(double z) {
         return exp(-1.0 * (THICKNESS - z) / abs_length(PHOTON_ENERGY));
     };
     double yield_z() {
         uniform_real_distribution<double> urd(0, 1);
-        
+
         while(1) {
             double z = THICKNESS * unity(gen);
             double p = unity(gen);
@@ -120,14 +124,14 @@ private:
     };
 public:
     PhotonGenerator() : unity(0, 1) {}
-    
+
     PhotonDistribution Generate(double energy) {
         PhotonDistribution result;
 
         double x = yield_xy();
         double y = yield_xy();
         double z = yield_z();
-        
+
         double if_fluo = unity(gen);
         if (if_fluo < FLUO_RATE && energy > FLUO_ENERGY) {
             double path = (unity(gen) > FLUO_BRANCH) ? FLUO_DISTANCE_AS : FLUO_DISTANCE_GA;
@@ -159,12 +163,15 @@ public:
     };
     Event Process(const PhotonDistribution& distr) {
         Event result;
-        
+
         //3x3 array: energy deposit
         vector<vector<double>> pixels(3, vector<double>(3));
-        
+
         for (const auto& photon : distr) {
             double e = smear_e(photon.energy);
+
+            e *=  exp(- photon.z * THICKNESS / (MU * TAU * BIAS));
+
             double sig = sigma(photon.z);
             for (int i = 0; i < 3; ++i) {
                 for (int j = 0; j < 3; ++j) {
@@ -174,8 +181,8 @@ public:
         }
         int counter = 0;
         double deposit = 0;
-        
-        
+
+
         for (int i = 0; i < 3; ++i) {
             for (int j = 0; j < 3; ++j) {
                 pixels[i][j] += yield_noise();
@@ -184,14 +191,14 @@ public:
                 } else {
                     counter++;
                     deposit += pixels[i][j];
-                }                
+                }
             }
         }
-        
-        return {deposit, counter, distr[0].z, define_type(pixels, counter)};        
+
+        return {deposit, counter, distr[0].z, define_type(pixels, counter)};
     };
-    
-    
+
+
 private:
     double sigma(double z) {
         return p0 + p1 * z + p2 * z * z;
@@ -202,7 +209,7 @@ private:
         normal_distribution<double> nd(npairs, sig);
         return PAIR_ENERGY * nd(gen);
     }
-    double yield_noise() {        
+    double yield_noise() {
         return PAIR_ENERGY * noise_distr(gen);
     }
     ClusterType define_type(const vector<vector<double>>& shape, int counter) {
@@ -234,7 +241,7 @@ private:
                 break;
         }
     }
-    
+
     normal_distribution<double> noise_distr;
     vector<function<double(double, double)>> vfunc;
 };
@@ -251,12 +258,3 @@ map<ClusterType, int> clsstats(double e) {
     }
     return cluster_stats;
 }
-
-
-
-
-
-
-
-
-

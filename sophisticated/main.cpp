@@ -10,6 +10,7 @@
 #include <TFile.h>
 
 #include <iostream>
+#include <fstream>
 #include <iomanip>
 #include <vector>
 
@@ -76,7 +77,17 @@ void make_energy_plot_pg() {
     f->Close();
 }
 
+void make_wp_grid() {
+    ofstream out("/home/daniil/Desktop/wp.dat");
 
+    ResponseGenerator rg;
+    for (double z = 0; z < 100; z+= 1) {
+        for (double x = -35; x <= 35; x+=1) {
+            out << rg.GetPixelRelatedV(x, 0, z, 0, 0) << " ";
+        }
+        out << endl;
+    }
+}
 
 void test_absorption() {
     PhotonGenerator pg;
@@ -101,6 +112,7 @@ void test_absorption() {
 
 int main() {
     //test_absorption();
-    make_energy_plot();
+    //make_energy_plot();
+    make_wp_grid();
     return 0;
 }
