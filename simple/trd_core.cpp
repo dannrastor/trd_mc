@@ -26,9 +26,12 @@
 //fluo parameters
 #define FLUO_RATE 0.5
 #define FLUO_BRANCH 0.5
+
 #define FLUO_DISTANCE_GA 40.0
 #define FLUO_DISTANCE_AS 15.0
-#define FLUO_ENERGY 10.0
+
+#define FLUO_ENERGY_GA 9.2
+#define FLUO_ENERGY_AS 10.5
 
 
 //sigma(z) fit parameters
@@ -133,15 +136,33 @@ public:
         double z = yield_z();
 
         double if_fluo = unity(gen);
-        if (if_fluo < FLUO_RATE && energy > FLUO_ENERGY) {
-            double path = (unity(gen) > FLUO_BRANCH) ? FLUO_DISTANCE_AS : FLUO_DISTANCE_GA;
+
+
+
+
+        if (if_fluo < FLUO_RATE && energy > FLUO_ENERGY_GA) {
+
+            double path = FLUO_DISTANCE_GA;
+            double fluo_e = FLUO_ENERGY_GA;
+
+            if (energy > FLUO_ENERGY_AS) {
+                double branch = unity(gen);
+                if (branch < FLUO_BRANCH) {
+                    path = FLUO_DISTANCE_AS;
+                    fluo_e = FLUO_ENERGY_AS;
+                }
+            }
+
+
+
             double phi = 2 * TMath::Pi() * unity(gen);
             double cos_theta = 2 * unity(gen) - 1;
             double xf = x + path * cos(phi) * cos_theta;
             double yf = y + path * sin(phi) * cos_theta;
             double zf = z + path * cos_theta;
-            result.push_back({x, y, z, energy - FLUO_ENERGY});
-            result.push_back({xf, yf, zf, FLUO_ENERGY});
+
+            result.push_back({x, y, z, energy - fluo_e});
+            result.push_back({xf, yf, zf, fluo_e});
         } else {
             result.push_back({x, y, z, energy});
         }
