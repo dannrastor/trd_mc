@@ -9,7 +9,7 @@
 #define THICKNESS 500.0
 
 #define MU 3e11
-#define TAU 20e-9
+#define TAU 50e-9
 #define BIAS 400
 
 //absorption parameters
@@ -55,6 +55,17 @@ enum class ClusterType {
     _3PX,
     _4PX,
     NOT_DETECTED
+};
+
+vector<ClusterType> CLUSTER_TYPES = {
+    ClusterType::CENTER,
+    ClusterType::OFF_CENTER_SIDE,
+    ClusterType::OFF_CENTER_CORNER,
+    ClusterType::SIDES,
+    ClusterType::CORNERS,
+    ClusterType::_3PX,
+    ClusterType::_4PX,
+    ClusterType::NOT_DETECTED
 };
 
 ostream& operator << (ostream& out, const ClusterType& type) {
@@ -130,6 +141,7 @@ public:
 
     PhotonDistribution Generate(double energy) {
         PhotonDistribution result;
+
 
         double x = yield_xy();
         double y = yield_xy();
