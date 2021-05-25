@@ -107,7 +107,7 @@ void old_sim() {
     for (int i = 0 ; i < n_particles; ++i) {
         double x = coord(gen);
         double y = coord(gen);
-        PhotonHit h{x, y, 400, energy};
+        PhotonHit h{x, y, 500, energy};
         vector<PhotonHit> v;
         v.push_back(h);
 
@@ -117,4 +117,127 @@ void old_sim() {
     }
     hist->Write();
     f->Close();
+}
+
+void diploma_1() {
+    TH1D* spectrum = new TH1D("energy_spectrum_fluo_nocce", "Measured energy spectrum", 200, 25, 45);
+
+    PhotonGenerator pg;
+    ResponseGenerator rg;
+
+        for (long int i = 0; i < 1000000; ++i) {
+            auto photon_distr = pg.Generate(40);
+            auto p = rg.Process(photon_distr);
+
+            spectrum -> Fill(p.deposit-0.001);
+
+        }
+
+    spectrum -> GetXaxis() -> SetTitle("Energy, keV");
+    spectrum -> GetYaxis() -> SetTitle("Counts");
+
+
+    TFile* f = new TFile("~/Desktop/diploma_pics/simple3.root", "update");
+    spectrum -> Write();
+    f->Close();
+
+
+    cout << "ready" << endl;
+}
+
+
+void diploma_2() {
+    TH1D* spectrum = new TH1D("energy_spectrum", "Measured energy spectrum", 200, 25, 45);
+    TH1D* v[4];
+    TH1D* z_distr = new TH1D("z", "Depth distribution", 100, 0, 500);
+
+    for(int i = 0; i < 4; ++i) {
+        auto name = ("spectrum_" + to_string(i+1) + "px").c_str();
+        auto title = (to_string(i+1) + "px clusters").c_str();
+        v[i] = new TH1D(name, title, 200, 25, 45);
+    }
+
+    map<ClusterType, int> cluster_stats;
+    PhotonGenerator pg;
+    ResponseGenerator rg;
+
+        for (long int i = 0; i < 1000000; ++i) {
+            auto photon_distr = pg.Generate(40);
+            auto p = rg.Process(photon_distr);
+
+            spectrum -> Fill(p.deposit-0.001);
+            v[p.npixels-1] -> Fill(p.deposit-0.001);
+            z_distr -> Fill(p.z);
+            cluster_stats[p.cluster_type]++;
+        }
+
+
+
+
+
+    TFile* f = new TFile("~/Desktop/diploma_pics/simple2.root", "update");
+    spectrum -> Write();
+    z_distr->Write();
+    for(int i = 0; i < 4; ++i) {
+        v[i] -> Write();
+    }
+
+
+    f->Close();
+
+
+    cout << "ready" << endl;
+
+}
+
+void diploma_3() {
+
+    ofstream fout;
+    fout.open("~/Desktop/diploma_pics/sigma.dat");
+
+    PhotonGenerator pg;
+    ResponseGenerator rg;
+
+    for (int e = 6; e < 61; ++e) {
+        TH1D* spectrum = new TH1D("es", "es", 300, 0, 65);
+
+        for (long int i = 0; i < 100000; ++i) {
+            auto photon_distr = pg.Generate(e);
+            auto p = rg.Process(photon_distr);
+
+            spectrum -> Fill(p.deposit-0.001);
+
+
+        }
+        fout << e << " " << spectrum->GetStdDev() << endl;
+        cout << e << " " << spectrum->GetStdDev() << endl;
+
+        delete spectrum;
+
+    }
+}
+
+void diploma_4() {
+
+
+
+    for (int e = 6; e < 61; ++e) {
+        auto stats = clsstats(e);
+
+        cout << e << " ";
+
+        for (auto type : CLUSTER_TYPES) {
+            if (stats.count(type)) {
+                cout << stats[type] << " ";
+            } else {
+                cout << "0 ";
+            }
+        }
+
+
+        cout << endl;
+    }
+
+
+
 }
