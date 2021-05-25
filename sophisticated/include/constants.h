@@ -17,7 +17,7 @@ constexpr double ELECTRON_CHARGE = 1.6e-19;
 constexpr double K_BOLTZ = 1.38e-23;
 
 constexpr double MU = 3e11; // um2 / (V * s)
-constexpr double TAU = 10e-9; //seconds
+constexpr double TAU = 20e-9; //seconds
 
 
 
