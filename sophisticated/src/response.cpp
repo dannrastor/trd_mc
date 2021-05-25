@@ -59,7 +59,7 @@ map<pair<int, int>, double> ResponseGenerator::Process(const vector<PhotonHit>& 
 
     //simulation parameters
     int n_group_electrons = 10;
-    int n_steps = 20;
+    int n_steps = 10;
 
     for (const auto& hit : hits) {
 
@@ -71,8 +71,8 @@ map<pair<int, int>, double> ResponseGenerator::Process(const vector<PhotonHit>& 
 
         int n_groups = n_electrons / n_group_electrons;
 
-        double cloud_size = InitialCloudSize(hit.energy);
-        double diffusion_sigma = GetDiffusionSigma(hit.z);
+        double cloud_size = 0; //InitialCloudSize(hit.energy);
+        double diffusion_sigma = 0;// GetDiffusionSigma(hit.z);
 
 
         for (int i_group = 0; i_group < n_groups; ++i_group) {
