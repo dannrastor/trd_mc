@@ -1,12 +1,12 @@
 #pragma once
 
 //detector parameters
-constexpr double THR = 4.2; //keV
+constexpr double THR = 4.4; //keV
 constexpr double NOISE = 80; //electrons
 constexpr double PX_SIZE = 55.0; //um
 constexpr double THICKNESS = 500.0; //um
 
-constexpr double BIAS = 400.0;
+constexpr double BIAS = 350.0;
 constexpr double TEMP = 320.0; //K
 
 //semicounductor parameters

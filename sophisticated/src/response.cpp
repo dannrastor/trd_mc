@@ -60,8 +60,8 @@ map<pair<int, int>, double> ResponseGenerator::Process(const vector<PhotonHit>& 
     map<pair<int, int>, double> result;
 
     //simulation parameters
-    double n_groups = 1000;
-    int n_steps = 10;
+    double n_groups = 100;
+    int n_steps = 3;
 
     for (const auto& hit : hits) {
 

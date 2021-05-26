@@ -140,6 +140,52 @@ void make_energy_plot_pg() {
     f->Close();
 }
 
+void make_energy_plot_pg_clsstats() {
+    double energy = 40;
+    double n_particles = 10000;
+
+    TH1D* hist = new TH1D("spectrum", "a", 200, 20, 45);
+    TH1D* v[4];
+    TH1D* z_distr = new TH1D("z", "Depth distribution", 100, 0, 500);
+
+    for(int i = 0; i < 4; ++i) {
+        auto name = ("spectrum_" + to_string(i+1) + "px").c_str();
+        auto title = (to_string(i+1) + "px clusters").c_str();
+        v[i] = new TH1D(name, title, 200, 25, 45);
+    }
+
+    TFile* f = new TFile("/home/daniil/Desktop/diploma_pics/spectrum_cls.root", "recreate");
+
+
+    PhotonGenerator pg;
+    ResponseGenerator rg;
+
+    for (int i = 0 ; i < n_particles; ++i) {
+        auto res = rg.Process(pg.Generate(energy));
+        double sum = 0;
+        int cntr = 0;
+        for (const auto& it : res) {
+
+            if (it.second * PAIR_ENERGY > THR) {
+                sum += rg.Smear(it.second, NOISE) * PAIR_ENERGY;
+                cntr++;
+            }
+        }
+        hist->Fill(sum);
+        if (cntr > 0 && cntr < 4) {
+
+            v[cntr-1]->Fill(sum);
+        }
+        cout << i << endl;
+    }
+    hist->Write();
+    for(int i = 0; i < 4; ++i) {
+        v[i] -> Write();
+    }
+
+    f->Close();
+}
+
 void make_wp_grid() {
     ofstream out("/home/daniil/Desktop/wp.dat");
 
@@ -180,10 +226,57 @@ void test_wp_borders() {
     }
 }
 
+void make_energy_plot_am() {
+    double energy = 59.5;
+    double n_particles = 50000;
+
+    TH1D* hist = new TH1D("spectrum", "a", 200, 0, 80);
+    TH1D* v[4];
+
+
+    for(int i = 0; i < 4; ++i) {
+        auto name = ("spectrum_" + to_string(i+1) + "px").c_str();
+        auto title = (to_string(i+1) + "px clusters").c_str();
+        v[i] = new TH1D(name, title, 200, 0, 80);
+    }
+
+    TFile* f = new TFile("/home/daniil/Desktop/diploma_pics/spectrum_cls_am.root", "recreate");
+
+
+    PhotonGenerator pg;
+    ResponseGenerator rg;
+
+    for (int i = 0 ; i < n_particles; ++i) {
+        auto res = rg.Process(pg.Generate(energy));
+        double sum = 0;
+        int cntr = 0;
+        for (const auto& it : res) {
+
+            if (it.second * PAIR_ENERGY > THR) {
+                sum += rg.Smear(it.second, NOISE) * PAIR_ENERGY;
+                sum += rg.Smear(0, 300) * PAIR_ENERGY;
+                cntr++;
+            }
+        }
+        hist->Fill(sum);
+        if (cntr > 0 && cntr <= 4) {
+
+            v[cntr-1]->Fill(sum);
+        }
+        cout << i << endl;
+    }
+    hist->Write();
+    for(int i = 0; i < 4; ++i) {
+        v[i] -> Write();
+    }
+
+    f->Close();
+}
+
 int main() {
     //test_wp_borders();
     //test_absorption();
-    make_energy_plot_pg();
+    make_energy_plot_am();
     //make_wp_grid();
     return 0;
 }
