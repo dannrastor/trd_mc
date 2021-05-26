@@ -6,7 +6,7 @@ constexpr double NOISE = 80; //electrons
 constexpr double PX_SIZE = 55.0; //um
 constexpr double THICKNESS = 500.0; //um
 
-constexpr double BIAS = 350.0;
+constexpr double BIAS = 400.0;
 constexpr double TEMP = 320.0; //K
 
 //semicounductor parameters
@@ -17,7 +17,7 @@ constexpr double ELECTRON_CHARGE = 1.6e-19;
 constexpr double K_BOLTZ = 1.38e-23;
 
 constexpr double MU = 3e11; // um2 / (V * s)
-constexpr double TAU = 50e-9; //seconds
+constexpr double TAU = 30e-9; //seconds
 
 
 

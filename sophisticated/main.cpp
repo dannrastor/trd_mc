@@ -273,10 +273,35 @@ void make_energy_plot_am() {
     f->Close();
 }
 
+double calculate_cce_integral(int depth) {
+
+    ResponseGenerator rg;
+
+    double result = 0;
+    double charge = 1;
+
+    for (int idepth = depth; idepth > 0; idepth--) {
+        charge *= rg.GetCCE(1.0);
+
+        double v_pre = rg.GetPixelRelatedV(0, 0, idepth, 0, 0);
+        double v_post = rg.GetPixelRelatedV(0, 0, idepth-1, 0, 0);
+
+        result += charge * (v_post - v_pre);
+    }
+
+    return result;
+
+}
+
 int main() {
     //test_wp_borders();
     //test_absorption();
-    make_energy_plot_am();
+    //make_energy_plot_am();
     //make_wp_grid();
+
+    for (int i = 0; i < 500; ++i) {
+        cout << i << " " << calculate_cce_integral(i) << endl;
+    }
+
     return 0;
 }
