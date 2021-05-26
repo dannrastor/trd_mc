@@ -115,10 +115,10 @@ void make_energy_plot() {
 
 void make_energy_plot_pg() {
     double energy = 40;
-    double n_particles = 5000;
+    double n_particles = 10000;
 
-    TH1D* hist = new TH1D("a", "a", 80, 0, 45);
-    TFile* f = new TFile("/home/daniil/Desktop/trd_plots/out_nolife.root", "recreate");
+    TH1D* hist = new TH1D("a", "a", 200, 20, 45);
+    TFile* f = new TFile("/home/daniil/Desktop/diploma_pics/spectrum.root", "recreate");
 
 
     PhotonGenerator pg;
@@ -128,8 +128,9 @@ void make_energy_plot_pg() {
         auto res = rg.Process(pg.Generate(energy));
         double sum = 0;
         for (const auto& it : res) {
+
             if (it.second * PAIR_ENERGY > THR) {
-                sum += it.second * PAIR_ENERGY;
+                sum += rg.Smear(it.second, NOISE) * PAIR_ENERGY;
             }
         }
         hist->Fill(sum);
@@ -139,45 +140,6 @@ void make_energy_plot_pg() {
     f->Close();
 }
 
-<<<<<<< HEAD
-void test_high_z() {
-    double energy = 40;
-    double n_particles = 1000;
-
-
-    TFile* f = new TFile("/home/daniil/Desktop/trd_plots/testhighz.root", "recreate");
-
-    mt19937 gen(random_device{}());
-    uniform_real_distribution<double> coord(-27.5, 27.5);
-    ResponseGenerator rg;
-
-    for (double z = 500; z > 400; z -= 5) {
-
-        auto h = to_string(int(z)).c_str();
-        TH1D* hist = new TH1D(h, h, 200, 0, 50);
-
-        for (int i = 0 ; i < n_particles; ++i) {
-            double x = coord(gen);
-            double y = coord(gen);
-            PhotonHit h{x, y, z, energy};
-            vector<PhotonHit> v;
-            v.push_back(h);
-            auto res = rg.Process(v);
-            double sum = 0;
-            for (const auto& it : res) {
-                if (it.second * PAIR_ENERGY > THR) {
-                    sum += rg.Smear(it.second, 80) * PAIR_ENERGY;
-                }
-            }
-            hist->Fill(sum);
-            cout << z << " " << i << endl;
-        }
-        hist->Write();
-    }
-
-
-    f->Close();
-=======
 void make_wp_grid() {
     ofstream out("/home/daniil/Desktop/wp.dat");
 
@@ -188,7 +150,6 @@ void make_wp_grid() {
         }
         out << endl;
     }
->>>>>>> cea9e8b15e01994ceaa798fdfcb48b3f2b656a09
 }
 
 void test_absorption() {
@@ -212,19 +173,17 @@ void test_absorption() {
 
 }
 
-
+void test_wp_borders() {
+    ResponseGenerator rg;
+    for (double v = 0; v < 300; v+= 1) {
+        cout << "x = " << v << " " <<rg.GetPixelRelatedV(v, v, 10, 0, 0) << endl;
+    }
+}
 
 int main() {
+    //test_wp_borders();
     //test_absorption();
-    //make_energy_plot();
-<<<<<<< HEAD
-    //make_energy_plot_pg();
-    //test_high_z();
-    while(1) {
-        test_response();
-    }
-=======
-    make_wp_grid();
->>>>>>> cea9e8b15e01994ceaa798fdfcb48b3f2b656a09
+    make_energy_plot_pg();
+    //make_wp_grid();
     return 0;
 }

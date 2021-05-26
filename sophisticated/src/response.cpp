@@ -4,6 +4,8 @@
 #include <algorithm>
 #include <cmath>
 #include <iostream>
+#include <utility>
+
 
 using namespace std;
 
@@ -58,27 +60,28 @@ map<pair<int, int>, double> ResponseGenerator::Process(const vector<PhotonHit>& 
     map<pair<int, int>, double> result;
 
     //simulation parameters
-    int n_group_electrons = 10;
-    int n_steps = 5;
+    double n_groups = 1000;
+    int n_steps = 10;
 
     for (const auto& hit : hits) {
 
         //initial ionization and its fluctuations limited by the Fano factor
         double n_electrons = hit.energy / PAIR_ENERGY;
 
+        cout << hit.energy << " " << hit.x << " " << hit.y << " " << hit.z << endl;
+        if (hit.z > 500 || hit.z < 0) continue;
+
         n_electrons = Smear(n_electrons, sqrt(n_electrons * FANO));
 
-
-        int n_groups = n_electrons / n_group_electrons;
-
-        double cloud_size = 0; //InitialCloudSize(hit.energy);
-        double diffusion_sigma = 0;// GetDiffusionSigma(hit.z);
+        double cloud_size = InitialCloudSize(hit.energy);
+        double diffusion_sigma = GetDiffusionSigma(hit.z);
 
 
         for (int i_group = 0; i_group < n_groups; ++i_group) {
             double xi = Smear(hit.x, cloud_size);
             double yi = Smear(hit.y, cloud_size);
-            double zi = Smear(hit.z, cloud_size);
+            double zi = hit.z;
+            zi = min(zi, 500.0);
 
             double xf = Smear(xi, diffusion_sigma);
             double yf = Smear(yi, diffusion_sigma);
@@ -90,6 +93,8 @@ map<pair<int, int>, double> ResponseGenerator::Process(const vector<PhotonHit>& 
 
 
             for (int i_step = 0; i_step < n_steps; ++i_step) {
+
+
                 double x_prestep = xi + (xf - xi) * i_step / n_steps;
                 double y_prestep = yi + (yf - yi) * i_step / n_steps;
                 double z_prestep = zi + (zf - zi) * i_step / n_steps;
@@ -98,6 +103,8 @@ map<pair<int, int>, double> ResponseGenerator::Process(const vector<PhotonHit>& 
                 double y_poststep = yi + (yf - yi) * (i_step + 1) / n_steps;
                 double z_poststep = zi + (zf - zi) * (i_step + 1) / n_steps;
 
+                charge *= GetCCE(fabs(z_prestep - z_poststep));
+
                 for (int x_pixel = -1; x_pixel <= 1; ++x_pixel) {
                     for (int y_pixel = -1; y_pixel <= 1; ++y_pixel) {
                             double v_pre = GetPixelRelatedV(x_prestep, y_prestep, z_prestep, x_pixel, y_pixel);
@@ -105,7 +112,7 @@ map<pair<int, int>, double> ResponseGenerator::Process(const vector<PhotonHit>& 
                             result[{x_pixel, y_pixel}] += charge * (v_post - v_pre);
                     }
                 }
-                //charge *= GetCCE(fabs(z_prestep - z_poststep));
+
 
             }
 

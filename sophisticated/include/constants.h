@@ -17,7 +17,7 @@ constexpr double ELECTRON_CHARGE = 1.6e-19;
 constexpr double K_BOLTZ = 1.38e-23;
 
 constexpr double MU = 3e11; // um2 / (V * s)
-constexpr double TAU = 20e-9; //seconds
+constexpr double TAU = 50e-9; //seconds
 
 
 
@@ -34,7 +34,7 @@ constexpr double B2 = 13.570;
 
 
 //fluo parameters
-constexpr double FLUO_RATE = 0;
+constexpr double FLUO_RATE = 0.5;
 constexpr double FLUO_BRANCH = 0.5;
 constexpr double FLUO_DISTANCE_GA = 40.0;
 constexpr double FLUO_DISTANCE_AS = 15.0;
