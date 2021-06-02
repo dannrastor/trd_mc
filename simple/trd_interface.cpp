@@ -122,10 +122,12 @@ void old_sim() {
 void diploma_1() {
     TH1D* spectrum = new TH1D("energy_spectrum_fluo_nocce", "Measured energy spectrum", 200, 25, 45);
 
+    auto start = std::chrono::steady_clock::now();
+
     PhotonGenerator pg;
     ResponseGenerator rg;
 
-        for (long int i = 0; i < 1000000; ++i) {
+        for (long int i = 0; i < 1000; ++i) {
             auto photon_distr = pg.Generate(40);
             auto p = rg.Process(photon_distr);
 
@@ -141,7 +143,8 @@ void diploma_1() {
     spectrum -> Write();
     f->Close();
 
-
+    auto finish = std::chrono::steady_clock::now();
+    cout << std::chrono::duration_cast<std::chrono::milliseconds>(finish - start).count() << "ms" << endl;
     cout << "ready" << endl;
 }
 

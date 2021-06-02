@@ -13,9 +13,10 @@
 #include <fstream>
 #include <iomanip>
 #include <vector>
+#include <chrono>
 
 using namespace std;
-
+using namespace std::chrono;
 
 
 void PrintChargeMap(const map<pair<int, int>, double>& m, ostream& out) {
@@ -228,7 +229,7 @@ void test_wp_borders() {
 
 void make_energy_plot_am() {
     double energy = 59.5;
-    double n_particles = 50000;
+    double n_particles = 1000;
 
     TH1D* hist = new TH1D("spectrum", "a", 200, 0, 80);
     TH1D* v[4];
@@ -240,7 +241,7 @@ void make_energy_plot_am() {
         v[i] = new TH1D(name, title, 200, 0, 80);
     }
 
-    TFile* f = new TFile("/home/daniil/Desktop/diploma_pics/spectrum_cls_am.root", "recreate");
+    //TFile* f = new TFile("/home/daniil/Desktop/diploma_pics/spectrum_cls_am.root", "recreate");
 
 
     PhotonGenerator pg;
@@ -265,12 +266,12 @@ void make_energy_plot_am() {
         }
         cout << i << endl;
     }
-    hist->Write();
+    //hist->Write();
     for(int i = 0; i < 4; ++i) {
-        v[i] -> Write();
+        //v[i] -> Write();
     }
 
-    f->Close();
+    //f->Close();
 }
 
 double calculate_cce_integral(int depth) {
@@ -294,14 +295,19 @@ double calculate_cce_integral(int depth) {
 }
 
 int main() {
+    auto start = steady_clock::now();
+
     //test_wp_borders();
     //test_absorption();
-    //make_energy_plot_am();
+    make_energy_plot_am();
     //make_wp_grid();
+    //
+    // for (int i = 0; i < 500; ++i) {
+    //     cout << i << " " << calculate_cce_integral(i) << endl;
+    // }
 
-    for (int i = 0; i < 500; ++i) {
-        cout << i << " " << calculate_cce_integral(i) << endl;
-    }
 
+    auto finish = steady_clock::now();
+    cout << duration_cast<milliseconds>(finish - start).count() << "ms" << endl;
     return 0;
 }
